@@ -309,6 +309,15 @@ input[type="search"] { max-width: 300px; }
 .item-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 .badge { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; background: rgba(240, 190, 110, 0.15); color: #f0c47a; border: 1px solid rgba(240, 190, 110, 0.3); }
 .badge.ok { background: rgba(127, 209, 166, 0.12); color: var(--ok); border-color: rgba(127, 209, 166, 0.35); }
+.type-chip { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-200); border: 1px solid var(--line); padding: 2px 8px; border-radius: 99px; }
+.type-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.type-pick label { cursor: pointer; }
+.type-pick input { position: absolute; opacity: 0; pointer-events: none; }
+.type-pick span { display: block; text-align: center; padding: 11px 10px; border: 1px solid var(--line); border-radius: 6px; font-weight: 600; color: var(--blue-200); background: rgba(3, 31, 51, 0.6); transition: all 0.15s; }
+.type-pick input:checked + span { background: var(--blue-100); color: var(--blue-600); border-color: var(--blue-100); }
+.type-pick input:focus-visible + span { box-shadow: 0 0 0 3px rgba(152, 186, 210, 0.35); }
+.type-pick input:disabled + span { opacity: 0.5; cursor: not-allowed; }
+.type-pick input:disabled:checked + span { opacity: 0.85; }
 .pin-chip { font: 700 13px var(--font-display); letter-spacing: 0.12em; color: var(--blue-200); }
 .empty { text-align: center; color: var(--blue-200); padding: 48px 16px; border: 1px dashed var(--line); border-radius: var(--radius); }
 

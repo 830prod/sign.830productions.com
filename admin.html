@@ -71,6 +71,14 @@
       <div class="editor">
         <form id="edit-form" class="card form-card" autocomplete="off">
           <fieldset>
+            <legend>Contract type</legend>
+            <div class="type-pick" role="radiogroup" aria-label="Contract type">
+              <label><input type="radio" name="type" value="video" checked><span>Videography</span></label>
+              <label><input type="radio" name="type" value="photo"><span>Photography</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
             <legend>Client</legend>
             <label class="fld"><span>Client full name / company *</span><input name="clientName" required></label>
             <div class="row">
@@ -99,7 +107,7 @@
               <label class="fld"><span>Begins</span><input name="coverageStart" type="time"></label>
               <label class="fld"><span>Ends</span><input name="coverageEnd" type="time"></label>
             </div>
-            <label class="fld"><span>Production services</span><textarea name="productionServices" rows="2"></textarea></label>
+            <label class="fld"><span id="services-label">Production services</span><textarea name="productionServices" rows="2"></textarea></label>
             <label class="fld"><span>Deliverables</span><textarea name="deliverables" rows="2"></textarea></label>
           </fieldset>
 

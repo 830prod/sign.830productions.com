@@ -52,6 +52,12 @@ export function stamp(ts) {
     : "";
 }
 
+export const TYPES = {
+  video: { label: "Videography", title: "Videography Services Agreement" },
+  photo: { label: "Photography", title: "Photography Services Agreement" },
+};
+export const typeOf = (c) => (c && c.type === "photo" ? "photo" : "video");
+
 function field(label, value, blank) {
   return `<div class="k-field"><div class="k-label">${label}</div><div class="k-val">${f(value, blank)}</div></div>`;
 }
@@ -80,6 +86,9 @@ export function renderContract(c, opts = {}) {
   const signedAt = sig ? stamp(sig.signedAt) : "";
   const signedDate = sig ? toDate(sig.signedAt)?.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "";
   const pending = `<span class="k-awaiting">Awaiting signature</span>`;
+  // Video and photo agreements share every term; only the wording below differs.
+  const V = typeOf(c) === "video";
+  const R = V ? "Videographer" : "Photographer";
 
   const clientSig = shown
     ? `<span class="k-script${preview ? " k-preview" : ""}">${esc(shown.name)}</span>`
@@ -94,7 +103,7 @@ export function renderContract(c, opts = {}) {
     <img class="k-logo" src="assets/logo-doc.png" width="640" height="374" alt="830 Productions">
     <div class="k-titles">
       <div class="k-eyebrow">830 PRODUCTIONS</div>
-      <h1>Videography Services Agreement</h1>
+      <h1>${TYPES[typeOf(c)].title}</h1>
       <div class="k-sub">PROFESSIONAL SERVICE CONTRACT</div>
     </div>
   </header>
@@ -106,19 +115,19 @@ export function renderContract(c, opts = {}) {
     ${field("EVENT DATE &amp; LOCATION", eventWhen(c), "Date, Start Time, End Time, Location")}
   </div>
 
-  <p>This Videography Services Agreement (the “Agreement”) is entered into by and between 830 Productions (“Videographer”) and the client identified above (“Client”). The parties agree to the following terms and conditions.</p>
+  <p>This ${TYPES[typeOf(c)].title} (the “Agreement”) is entered into by and between 830 Productions (“${R}”) and the client identified above (“Client”). The parties agree to the following terms and conditions.</p>
 
   <section>
     <h2>1. SERVICES &amp; SCOPE</h2>
-    <p>Videographer will provide professional video production services for the Event / Project described above and according to the package or proposal selected by Client.</p>
+    <p>${R} will provide professional ${V ? "video production" : "photography"} services for the Event / Project described above and according to the package or proposal selected by Client.</p>
     <ul>
       <li>Coverage hours: ${f(c.coverageHours ? `${c.coverageHours} hours` : "", "____ hours")}, beginning at ${f(time12(c.coverageStart), "____")} and ending at ${f(time12(c.coverageEnd), "____")}.</li>
-      <li>Production services: ${f(c.productionServices, "single/multi-camera coverage, audio capture, lighting, etc.")}.</li>
-      <li>Deliverables: ${f(c.deliverables, "final video(s), highlight film, social clips, photographs, etc.")}.</li>
+      <li>${V ? "Production" : "Photography"} services: ${f(c.productionServices, V ? "single/multi-camera coverage, audio capture, lighting, etc." : "lead photographer, second shooter, lighting, etc.")}.</li>
+      <li>Deliverables: ${f(c.deliverables, V ? "final video(s), highlight film, social clips, photographs, etc." : "approximate number of edited images, online gallery, prints, etc.")}.</li>
       <li>Delivery method: digital download and/or online gallery.</li>
       <li>Any service, deliverable, location, or production requirement not expressly listed is outside the agreed scope and may incur an additional fee.</li>
     </ul>
-    <p>Videographer retains reasonable creative discretion regarding camera placement, framing, lighting, audio capture, editing, color treatment, pacing, music selection, and overall artistic style, subject to the agreed deliverables.</p>
+    <p>${R} retains reasonable creative discretion regarding ${V ? "camera placement, framing, lighting, audio capture, editing, color treatment, pacing, music selection," : "posing, composition, framing, lighting, editing, color treatment, retouching, image selection,"} and overall artistic style, subject to the agreed deliverables.</p>
   </section>
 
   <section>
@@ -130,19 +139,19 @@ export function renderContract(c, opts = {}) {
       ${field("BALANCE DUE", c.balanceDue, "____ days before event / other")}
     </div>
     <p>The date and production time are not reserved until the required retainer has been received and this Agreement has been signed by both parties. Unless otherwise stated in writing, all amounts are due by the dates specified above.</p>
-    <p>Late balances may be assessed a late fee of 5% of the overdue amount, to the extent permitted by applicable law, plus reasonable collection costs. Videographer may suspend work or withhold delivery of final materials while an account remains materially past due.</p>
+    <p>Late balances may be assessed a late fee of 5% of the overdue amount, to the extent permitted by applicable law, plus reasonable collection costs. ${R} may suspend work or withhold delivery of final materials while an account remains materially past due.</p>
   </section>
 
   <section>
     <h2>3. CANCELLATION &amp; RESCHEDULING</h2>
-    <p>Client cancellations must be submitted in writing. The retainer is non-refundable because it compensates Videographer for reserving the date and declining other work.</p>
+    <p>Client cancellations must be submitted in writing. The retainer is non-refundable because it compensates ${R} for reserving the date and declining other work.</p>
     <ul>
       <li>Cancellation more than 30 days before the Event: retainer is retained; no additional cancellation fee is due unless otherwise stated in the proposal.</li>
       <li>Cancellation 11–30 days before the Event: Client is responsible for 20% of the total contract price, less amounts already paid.</li>
       <li>Cancellation 10 days or fewer before the Event: Client is responsible for 50% of the total contract price, less amounts already paid.</li>
-      <li>Rescheduling is subject to Videographer’s availability and must be requested in writing. A $100 rescheduling fee may apply, plus documented non-refundable third-party costs.</li>
+      <li>Rescheduling is subject to ${R}’s availability and must be requested in writing. A $100 rescheduling fee may apply, plus documented non-refundable third-party costs.</li>
     </ul>
-    <p>If Videographer is unable to perform because of serious illness, emergency, or another circumstance that makes performance reasonably impossible, Videographer will provide notice as soon as practicable and refund amounts paid for services not performed. This refund is the Client’s exclusive monetary remedy for such cancellation, except where prohibited by law.</p>
+    <p>If ${R} is unable to perform because of serious illness, emergency, or another circumstance that makes performance reasonably impossible, ${R} will provide notice as soon as practicable and refund amounts paid for services not performed. This refund is the Client’s exclusive monetary remedy for such cancellation, except where prohibited by law.</p>
   </section>
 
   <section>
@@ -150,72 +159,78 @@ export function renderContract(c, opts = {}) {
     <ul>
       <li>Client is responsible for providing timely access to the venue, subjects, and scheduled activities.</li>
       <li>Delays caused by Client, venue restrictions, guests, traffic, or other third parties do not automatically extend coverage.</li>
-      <li>Additional coverage may be purchased at ${f(money(c.overtimeRate), "$____")}/hour, subject to Videographer’s availability.</li>
+      <li>Additional coverage may be purchased at ${f(money(c.overtimeRate), "$____")}/hour, subject to ${R}’s availability.</li>
       <li>Travel, parking, tolls, lodging, permits, special equipment, or other project expenses not included in the package may be billed when disclosed or reasonably required.</li>
-      <li>For coverage exceeding 6 consecutive hours, Client will provide a reasonable meal or reimburse a reasonable meal expense for the Videographer and crew.</li>
+      <li>For coverage exceeding 6 consecutive hours, Client will provide a reasonable meal or reimburse a reasonable meal expense for the ${R} and crew.</li>
     </ul>
   </section>
 
   <section>
-    <h2>5. DELIVERABLES, EDITING &amp; REVISIONS</h2>
-    <p>Final edited deliverables are expected within ${f(c.deliveryEstimate, "4–6 weeks")} following the Event, provided Client has supplied all required materials and approvals. Delivery estimates are not guaranteed deadlines unless expressly stated as a guaranteed delivery date in writing.</p>
-    <ul>
+    <h2>5. DELIVERABLES, EDITING &amp; ${V ? "REVISIONS" : "RETOUCHING"}</h2>
+    <p>Final edited ${V ? "deliverables are" : "images are"} expected within ${f(c.deliveryEstimate, "4–6 weeks")} following the Event, provided Client has supplied all required materials and approvals. Delivery estimates are not guaranteed deadlines unless expressly stated as a guaranteed delivery date in writing.</p>
+    ${V ? `<ul>
       <li>Included revisions: 1 round of reasonable revisions to the final edit.</li>
       <li>Additional revisions, re-edits, alternate versions, or changes requested after approval may be billed at $100/hour or the applicable rate listed in the proposal.</li>
       <li>A revision round means one consolidated list of requested changes submitted by Client within the review period.</li>
       <li>Rush delivery, if available, may be subject to an additional fee.</li>
-    </ul>
+    </ul>` : `<ul>
+      <li>Included editing: professional color correction, exposure, and tonal adjustments on all delivered images, plus 1 round of reasonable revisions.</li>
+      <li>Photographer selects the images to be delivered. Duplicates, test shots, and images with technical flaws are not delivered.</li>
+      <li>Advanced retouching (such as skin smoothing, object or blemish removal, body reshaping, or compositing), additional edits, or changes requested after approval may be billed at $100/hour or the applicable rate listed in the proposal.</li>
+      <li>A revision round means one consolidated list of requested changes submitted by Client within the review period.</li>
+      <li>Rush delivery, if available, may be subject to an additional fee.</li>
+    </ul>`}
     <p>Client is responsible for reviewing deliverables promptly and reporting technical issues or requested revisions within ${f(c.reviewDays, "7")} days of delivery. Once a deliverable has been approved, substantial re-editing may be treated as a new service.</p>
   </section>
 
   <section>
-    <h2>6. RAW FOOTAGE, FILES &amp; ARCHIVING</h2>
-    <p>Unless expressly purchased or agreed in writing, raw footage, project files, source files, editing timelines, proxies, unused takes, and production files remain the property of 830 Productions and are not included in the final deliverables.</p>
-    <p>Videographer will use reasonable care when storing project files but does not guarantee indefinite archival storage. Client is responsible for downloading and securely backing up delivered materials. Unless otherwise agreed, Videographer may delete project files after ${f(c.archiveDays ? `${c.archiveDays} days` : "", "90 days")} following final delivery.</p>
+    <h2>6. ${V ? "RAW FOOTAGE, FILES" : "RAW FILES, IMAGES"} &amp; ARCHIVING</h2>
+    <p>${V ? "Unless expressly purchased or agreed in writing, raw footage, project files, source files, editing timelines, proxies, unused takes, and production files remain the property of 830 Productions and are not included in the final deliverables." : "Unless expressly purchased or agreed in writing, RAW files, unedited images, outtakes, editing catalogs, presets, and production files remain the property of 830 Productions and are not included in the final deliverables. Photographer does not deliver RAW or unedited images."}</p>
+    <p>${R} will use reasonable care when storing project files but does not guarantee indefinite archival storage. Client is responsible for downloading and securely backing up delivered materials. Unless otherwise agreed, ${R} may delete project files after ${f(c.archiveDays ? `${c.archiveDays} days` : "", "90 days")} following final delivery.</p>
   </section>
 
   <section>
     <h2>7. INTELLECTUAL PROPERTY &amp; LICENSE</h2>
-    <p>Copyright and ownership of raw footage and production materials remain with Videographer unless a separate written transfer is executed. Upon full payment, Client receives a perpetual, non-exclusive license to use the final delivered media for personal, internal, and promotional purposes.</p>
-    <p>Client may not resell, sublicense, materially alter, or transfer the final media for commercial exploitation beyond the agreed purpose without written permission, except where such restriction is prohibited by law.</p>
-    <p>Videographer retains the right to display completed work and excerpts for portfolio, website, social media, advertising, competitions, and other promotional purposes unless Client and Videographer agree in writing to a privacy or non-promotional restriction before production.</p>
+    <p>Copyright and ownership of ${V ? "raw footage and production materials" : "all images, including delivered images, and production materials"} remain with ${R} unless a separate written transfer is executed. Upon full payment, Client receives a perpetual, non-exclusive license to use the final delivered ${V ? "media" : "images"} for personal, internal, and promotional purposes${V ? "" : ", including making prints for personal use"}.</p>
+    <p>Client may not resell, sublicense, materially alter, or transfer the final ${V ? "media" : "images"} for commercial exploitation beyond the agreed purpose without written permission, except where such restriction is prohibited by law.</p>
+    <p>${R} retains the right to display completed work and excerpts for portfolio, website, social media, advertising, competitions, and other promotional purposes unless Client and ${R} agree in writing to a privacy or non-promotional restriction before production.</p>
   </section>
 
   <section>
-    <h2>8. MUSIC, THIRD-PARTY MATERIALS &amp; CLIENT CONTENT</h2>
-    <p>Videographer will use music, graphics, fonts, stock media, or other third-party materials subject to applicable licenses. Client acknowledges that platform availability and third-party licensing rules can change after delivery.</p>
-    <p>Client represents that it has permission to provide Videographer with any photographs, logos, recordings, music, trademarks, footage, or other materials supplied by Client. Client is responsible for claims arising from materials supplied without the necessary rights or permissions.</p>
+    <h2>8. ${V ? "MUSIC, " : ""}THIRD-PARTY MATERIALS &amp; CLIENT CONTENT</h2>
+    <p>${R} will use ${V ? "music, graphics, fonts, stock media," : "graphics, fonts, presets, templates,"} or other third-party materials subject to applicable licenses. Client acknowledges that platform availability and third-party licensing rules can change after delivery.</p>
+    <p>Client represents that it has permission to provide ${R} with any photographs, logos, recordings, music, trademarks, footage, or other materials supplied by Client. Client is responsible for claims arising from materials supplied without the necessary rights or permissions.</p>
   </section>
 
   <section>
     <h2>9. CLIENT RESPONSIBILITIES</h2>
     <ul>
-      <li>Obtain venue permissions, filming permits, access credentials, and other required clearances unless expressly assigned to Videographer.</li>
+      <li>Obtain venue permissions, ${V ? "filming" : "photography"} permits, access credentials, and other required clearances unless expressly assigned to ${R}.</li>
       <li>Provide accurate schedules, addresses, contact information, and key-event details.</li>
-      <li>Identify important moments that must be captured, including speeches, performances, entrances, ceremonies, or other scheduled events.</li>
-      <li>Ensure reasonable access and a safe working environment for Videographer, crew, and equipment.</li>
-      <li>Inform guests, performers, speakers, and other relevant participants that recording may occur and obtain permissions required by the venue or applicable law.</li>
-      <li>Prevent guests or other persons from intentionally obstructing cameras, audio equipment, lighting, or crew.</li>
+      <li>${V ? "Identify important moments that must be captured, including speeches, performances, entrances, ceremonies, or other scheduled events." : "Identify important moments, people, and group photos that must be captured, including ceremonies, entrances, family or group portraits, details, or other scheduled events."}</li>
+      <li>Ensure reasonable access and a safe working environment for ${R}, crew, and equipment.</li>
+      <li>Inform guests, performers, speakers, and other relevant participants that ${V ? "recording" : "photography"} may occur and obtain permissions required by the venue or applicable law.</li>
+      <li>Prevent guests or other persons from intentionally obstructing ${V ? "cameras, audio equipment, lighting, or crew" : "the Photographer, cameras, lighting, or crew"}.</li>
       <li>Designate a reliable day-of point of contact when appropriate.</li>
     </ul>
   </section>
 
   <section>
     <h2>10. CREATIVE LIMITATIONS &amp; NO GUARANTEE</h2>
-    <p>Videography is an observational and creative service. Videographer cannot guarantee that every guest, moment, detail, or event will be recorded. Missed footage may result from timing, blocked sightlines, lighting, audio conditions, venue rules, guest interference, equipment limitations, safety concerns, or circumstances outside Videographer’s reasonable control.</p>
-    <p>Videographer will make reasonable professional efforts to produce a high-quality result but does not guarantee a particular artistic style, emotional reaction, social-media performance, audience response, or outcome.</p>
+    <p>${V ? "Videography" : "Photography"} is an observational and creative service. ${R} cannot guarantee that every guest, moment, detail, or event will be ${V ? "recorded" : "photographed"}. Missed ${V ? "footage" : "images"} may result from timing, blocked sightlines, lighting, ${V ? "audio conditions" : "closed eyes or movement"}, venue rules, guest interference, equipment limitations, safety concerns, or circumstances outside ${R}’s reasonable control.</p>
+    <p>${R} will make reasonable professional efforts to produce a high-quality result but does not guarantee a particular artistic style, emotional reaction, social-media performance, audience response, or outcome.</p>
   </section>
 
   <section>
     <h2>11. WEATHER, VENUE &amp; SAFETY</h2>
-    <p>Videographer may modify equipment, positioning, schedule, or coverage when conditions create a reasonable risk of injury or equipment damage. Outdoor coverage may be moved, delayed, shortened, or cancelled when weather or environmental conditions make filming unsafe or impracticable.</p>
-    <p>Client is responsible for obtaining a safe location for equipment and crew. Videographer may refuse or stop work when a situation presents a reasonable threat to personal safety or equipment, including violence, hazardous conditions, unlawful activity, or unsafe crowd behavior.</p>
+    <p>${R} may modify equipment, positioning, schedule, or coverage when conditions create a reasonable risk of injury or equipment damage. Outdoor coverage may be moved, delayed, shortened, or cancelled when weather or environmental conditions make ${V ? "filming" : "shooting"} unsafe or impracticable.</p>
+    <p>Client is responsible for obtaining a safe location for equipment and crew. ${R} may refuse or stop work when a situation presents a reasonable threat to personal safety or equipment, including violence, hazardous conditions, unlawful activity, or unsafe crowd behavior.</p>
   </section>
 
   <section>
     <h2>12. LIMITATION OF LIABILITY</h2>
-    <p>Videographer will take reasonable precautions to protect equipment and capture the Event. If equipment failure, data corruption, accident, or another unforeseen event materially prevents delivery, Videographer’s liability will be limited, to the maximum extent permitted by law, to the amount actually paid by Client for the affected services.</p>
-    <p>Videographer will not be liable for indirect, incidental, consequential, special, or punitive damages, including lost profits, lost opportunities, reputational loss, or emotional distress, except where such limitation is prohibited by applicable law.</p>
+    <p>${R} will take reasonable precautions to protect equipment and capture the Event. If equipment failure, data corruption, accident, or another unforeseen event materially prevents delivery, ${R}’s liability will be limited, to the maximum extent permitted by law, to the amount actually paid by Client for the affected services.</p>
+    <p>${R} will not be liable for indirect, incidental, consequential, special, or punitive damages, including lost profits, lost opportunities, reputational loss, or emotional distress, except where such limitation is prohibited by applicable law.</p>
   </section>
 
   <section>
@@ -225,18 +240,18 @@ export function renderContract(c, opts = {}) {
 
   <section>
     <h2>14. INDEMNIFICATION</h2>
-    <p>To the extent permitted by law, Client agrees to indemnify and hold harmless 830 Productions and its personnel from third-party claims, damages, losses, or reasonable expenses arising from Client’s breach of this Agreement, Client-provided materials, failure to obtain required permissions, or unsafe conditions under Client’s control, except to the extent caused by Videographer’s negligence or willful misconduct.</p>
+    <p>To the extent permitted by law, Client agrees to indemnify and hold harmless 830 Productions and its personnel from third-party claims, damages, losses, or reasonable expenses arising from Client’s breach of this Agreement, Client-provided materials, failure to obtain required permissions, or unsafe conditions under Client’s control, except to the extent caused by ${R}’s negligence or willful misconduct.</p>
   </section>
 
   <section>
     <h2>15. PRIVACY, RELEASES &amp; PUBLICITY</h2>
-    <p>Client is responsible for identifying any participant who must not be recorded and for communicating applicable restrictions before filming. Videographer will make reasonable efforts to honor clearly communicated restrictions but cannot guarantee exclusion of every person from incidental background footage at public or crowded events.</p>
+    <p>Client is responsible for identifying any participant who must not be ${V ? "recorded" : "photographed"} and for communicating applicable restrictions before ${V ? "filming" : "the shoot"}. ${R} will make reasonable efforts to honor clearly communicated restrictions but cannot guarantee exclusion of every person from incidental background ${V ? "footage" : "images"} at public or crowded events.</p>
     <p>Any requested restriction on portfolio or promotional use should be documented in writing before the Event. Separate model or talent releases may be required for individuals appearing prominently in commercial content.</p>
   </section>
 
   <section>
     <h2>16. INDEPENDENT CONTRACTOR</h2>
-    <p>830 Productions is an independent contractor and is not an employee, partner, joint venturer, or agent of Client. Videographer controls the manner and means of performing the services, subject to the agreed project requirements.</p>
+    <p>830 Productions is an independent contractor and is not an employee, partner, joint venturer, or agent of Client. ${R} controls the manner and means of performing the services, subject to the agreed project requirements.</p>
   </section>
 
   <section>
@@ -296,7 +311,7 @@ export function renderContract(c, opts = {}) {
 
 export function pdfName(c) {
   const who = String(c.clientName || "Client").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
-  return `830-Productions-Agreement-${who}${c.signature ? "-SIGNED" : ""}.pdf`;
+  return `830-Productions-${TYPES[typeOf(c)].label}-Agreement-${who}${c.signature ? "-SIGNED" : ""}.pdf`;
 }
 
 // Renders the contract at letter-page width and saves it as a PDF.

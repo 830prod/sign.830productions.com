@@ -29,7 +29,17 @@ export const DEFAULTS = {
   archiveDays: "90",
   governingLaw: "New Jersey",
   overtimeRate: "",
-  productionServices: "single-camera coverage, professional audio capture, and lighting",
-  deliverables: "final edited video",
   balanceDue: "14 days before the event",
+};
+
+// Per contract type defaults (Video vs Photo), layered over DEFAULTS.
+export const TYPE_DEFAULTS = {
+  video: {
+    productionServices: "single-camera coverage, professional audio capture, and lighting",
+    deliverables: "final edited video",
+  },
+  photo: {
+    productionServices: "lead photographer coverage with professional lighting",
+    deliverables: "professionally edited high-resolution images delivered via online gallery",
+  },
 };

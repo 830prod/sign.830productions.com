@@ -1,5 +1,5 @@
 import { db, configured, doc, getDoc, updateDoc, serverTimestamp } from "./firebase.js";
-import { renderContract, downloadPdf } from "./contract.js";
+import { renderContract, downloadPdf, TYPES, typeOf } from "./contract.js";
 
 const $ = (id) => document.getElementById(id);
 const boxes = [...$("pin-boxes").querySelectorAll("input")];
@@ -94,6 +94,7 @@ function showDoc() {
   const signed = contract.status === "signed";
   $("doc-status").textContent = signed ? "Signed" : `Prepared for ${contract.clientName || "you"}`;
   $("doc-status").classList.toggle("ok", signed);
+  $("doc-title").textContent = TYPES[typeOf(contract)].title;
   $("download-btn").hidden = !signed;
   $("signed-banner").hidden = !signed;
   $("sign-form").hidden = signed;

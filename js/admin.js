@@ -3,14 +3,15 @@ import {
   GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
   collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp,
 } from "./firebase.js";
-import { ADMIN_EMAIL, SITE_URL, DEFAULTS } from "./config.js";
-import { renderContract, downloadPdf, balanceOf, longDate, stamp, toDate } from "./contract.js";
+import { ADMIN_EMAIL, SITE_URL, DEFAULTS, TYPE_DEFAULTS } from "./config.js";
+import { renderContract, downloadPdf, balanceOf, longDate, stamp, toDate, TYPES, typeOf } from "./contract.js";
 
 const $ = (id) => document.getElementById(id);
 const esc = (v) =>
   String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 const FIELDS = [
+  "type",
   "clientName", "clientEmail", "clientPhone", "clientAddress",
   "eventName", "eventDate", "eventStart", "eventEnd", "eventLocation", "agreementDate",
   "coverageHours", "coverageStart", "coverageEnd", "productionServices", "deliverables",
@@ -49,7 +50,7 @@ async function copy(text, label = "Copied") {
 
 const link = (pin) => `${SITE_URL}/?pin=${pin}`;
 const inviteMsg = (c) =>
-  `Hi ${String(c.clientName || "").split(" ")[0] || "there"}, your 830 Productions agreement for ${c.eventName || "your event"} is ready to review and sign.\n\n` +
+  `Hi ${String(c.clientName || "").split(" ")[0] || "there"}, your 830 Productions ${TYPES[typeOf(c)].label.toLowerCase()} agreement for ${c.eventName || "your event"} is ready to review and sign.\n\n` +
   `Open: ${link(c.pin)}\nOr go to ${SITE_URL.replace(/^https?:\/\//, "")} and enter PIN ${c.pin}.\n\nThanks!\n830 Productions`;
 
 // ---------- Auth ----------
@@ -129,6 +130,7 @@ function renderList() {
         <div class="item-main" data-act="view">
           <div class="item-top">
             <span class="badge ${isSigned ? "ok" : ""}">${isSigned ? "Signed" : "Awaiting"}</span>
+            <span class="type-chip">${TYPES[typeOf(c)].label}</span>
             <span class="pin-chip" title="PIN">${esc(c.pin)}</span>
           </div>
           <div class="item-name">${esc(c.clientName || "Untitled")}</div>
@@ -202,11 +204,13 @@ const form = $("edit-form");
 function readForm() {
   const data = {};
   FIELDS.forEach((k) => (data[k] = (form.elements[k]?.value ?? "").trim()));
+  data.type = data.type === "photo" ? "photo" : "video";
   return data;
 }
 
 function paintPreview() {
   const data = readForm();
+  $("services-label").textContent = data.type === "photo" ? "Photography services" : "Production services";
   $("balance-out").value = balanceOf(data) || "";
   $("edit-preview").innerHTML = renderContract(data);
 }
@@ -217,10 +221,12 @@ function openEditor(c) {
   $("edit-error").textContent = "";
   const today = new Date();
   const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-  const src = c || { ...DEFAULTS, agreementDate: iso };
+  const src = c ? { ...c, type: typeOf(c) } : { ...DEFAULTS, ...TYPE_DEFAULTS.video, type: "video", agreementDate: iso };
   FIELDS.forEach((k) => {
     if (form.elements[k]) form.elements[k].value = src[k] ?? "";
   });
+  // Type is fixed once a contract exists; it's chosen when creating.
+  form.querySelectorAll('input[name="type"]').forEach((r) => (r.disabled = !!c));
   $("edit-eyebrow").textContent = c ? `Editing · PIN ${c.pin}` : "New customer";
   $("edit-title").textContent = c ? c.clientName || "Edit contract" : "Create contract";
   $("save-btn").textContent = c ? "Save changes" : "Save & get PIN";
@@ -230,6 +236,19 @@ function openEditor(c) {
 }
 
 form.addEventListener("input", paintPreview);
+
+// Switching type on a new contract swaps in that type's default wording,
+// unless the field was already customized.
+form.querySelectorAll('input[name="type"]').forEach((r) =>
+  r.addEventListener("change", () => {
+    const prev = r.value === "photo" ? "video" : "photo";
+    ["productionServices", "deliverables"].forEach((k) => {
+      const el = form.elements[k];
+      if (!el.value.trim() || el.value === TYPE_DEFAULTS[prev][k]) el.value = TYPE_DEFAULTS[r.value][k];
+    });
+    paintPreview();
+  })
+);
 $("cancel-btn").addEventListener("click", () => show("list-view"));
 
 function randomPin() {
