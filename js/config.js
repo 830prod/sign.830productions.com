@@ -21,8 +21,8 @@ export const SITE_URL = "https://sign.830productions.com";
 export const DEFAULTS = {
   repName: "Jonathan Barkei",
   repEmail: "830prod@gmail.com",
-  repPhone: "",
-  businessAddress: "",
+  repPhone: "(732) 667-0740",
+  businessAddress: "99 Highland Ave, Bridgewater, NJ 08807",
   repInitials: "JB",
   deliveryEstimate: "4–6 weeks",
   reviewDays: "7",
