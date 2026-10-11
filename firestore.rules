@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Keep this email in sync with ADMIN_EMAIL in js/config.js.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == '830prod@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // A client signing: only pending -> signed, only the signature fields,
+    // and the timestamp must be the server's clock.
+    function isValidSigning() {
+      let sig = request.resource.data.signature;
+      return resource.data.status == 'pending'
+        && request.resource.data.status == 'signed'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'signature'])
+        && sig.keys().hasAll(['name', 'initials', 'signedAt'])
+        && sig.keys().hasOnly(['name', 'initials', 'signedAt', 'userAgent'])
+        && sig.name is string && sig.name.size() >= 2 && sig.name.size() <= 80
+        && sig.initials is string && sig.initials.size() >= 1 && sig.initials.size() <= 6
+        && sig.signedAt == request.time
+        && (!('userAgent' in sig) || (sig.userAgent is string && sig.userAgent.size() <= 300));
+    }
+
+    // Document ID is the 6-digit PIN. Anyone holding a PIN can read that one
+    // contract, but nobody except the admin can list or browse contracts.
+    match /contracts/{pin} {
+      allow get: if pin.matches('^[0-9]{6}$');
+      allow list: if isAdmin();
+      allow create: if isAdmin()
+        && pin.matches('^[0-9]{6}$')
+        && request.resource.data.status == 'pending';
+      // Admin can edit until signed; signed contracts are locked (delete only).
+      allow update: if (isAdmin()
+          && resource.data.status == 'pending'
+          && request.resource.data.status == 'pending')
+        || isValidSigning();
+      allow delete: if isAdmin();
+    }
+  }
+}

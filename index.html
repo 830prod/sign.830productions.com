@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Your Agreement | 830 Productions</title>
+  <meta name="description" content="Review and sign your 830 Productions agreement.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="https://830productions.com" class="brand"><img src="assets/logo-full.svg" alt="830 Productions"></a>
+    <span class="topbar-tag">Secure Signing</span>
+  </header>
+
+  <main>
+    <!-- Step 1: PIN -->
+    <section id="pin-view" class="card pin-card">
+      <h1>Sign your agreement</h1>
+      <p class="muted">Enter the 6-digit PIN from 830 Productions to open your contract.</p>
+      <form id="pin-form" autocomplete="off">
+        <div class="pin-boxes" id="pin-boxes">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 1" autocomplete="one-time-code">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 2">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 3">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 4">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 5">
+          <input inputmode="numeric" pattern="[0-9]*" aria-label="PIN digit 6">
+        </div>
+        <p class="form-error" id="pin-error" role="alert"></p>
+        <button class="btn btn-primary btn-wide" type="submit" id="pin-submit">Open contract</button>
+      </form>
+      <p class="fine">Questions? Email <a href="mailto:830prod@gmail.com">830prod@gmail.com</a></p>
+    </section>
+
+    <!-- Step 2: Review + sign -->
+    <section id="doc-view" hidden>
+      <div class="doc-bar">
+        <div>
+          <div class="eyebrow" id="doc-status">Ready to sign</div>
+          <h1 id="doc-title">Videography Services Agreement</h1>
+        </div>
+        <div class="doc-actions">
+          <button class="btn btn-ghost" id="exit-btn" type="button">Exit</button>
+          <button class="btn btn-primary" id="download-btn" type="button" hidden>Download PDF</button>
+        </div>
+      </div>
+
+      <div class="success" id="signed-banner" hidden>
+        <strong>Signed. Thank you!</strong>
+        <span id="signed-msg">Your signed agreement is saved with 830 Productions. You can download a copy for your records.</span>
+      </div>
+
+      <div class="paper-wrap" id="paper"></div>
+
+      <form class="card sign-card" id="sign-form" hidden>
+        <h2>Sign this agreement</h2>
+        <p class="muted">Type your full legal name. It will be applied to the agreement as your electronic signature.</p>
+        <div class="row">
+          <label class="fld grow">
+            <span>Full legal name</span>
+            <input id="sig-name" required autocomplete="name" maxlength="80">
+          </label>
+          <label class="fld">
+            <span>Initials</span>
+            <input id="sig-initials" required maxlength="6" class="initials-input">
+          </label>
+        </div>
+        <div class="sig-preview" aria-live="polite">
+          <span class="sig-preview-label">Signature preview</span>
+          <span id="sig-preview" class="script-preview">Your name</span>
+        </div>
+        <label class="check">
+          <input type="checkbox" id="sig-agree" required>
+          <span>I have read and agree to this Agreement, and I consent to sign it electronically. I understand my typed name is my legal signature.</span>
+        </label>
+        <p class="form-error" id="sign-error" role="alert"></p>
+        <button class="btn btn-primary btn-wide" type="submit" id="sign-btn">Sign agreement</button>
+      </form>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script type="module" src="js/client.js"></script>
+</body>
+</html>

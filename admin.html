@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contracts Admin | 830 Productions</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Great+Vibes&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+</head>
+<body class="admin">
+  <header class="topbar">
+    <a href="admin.html" class="brand"><img src="assets/logo-full.svg" alt="830 Productions"></a>
+    <span class="topbar-tag">Contracts Admin</span>
+    <div class="topbar-right" id="user-box" hidden>
+      <span class="muted" id="user-email"></span>
+      <button class="btn btn-ghost btn-sm" id="signout-btn" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Sign in -->
+    <section id="login-view" class="card pin-card" hidden>
+      <h1>Admin sign in</h1>
+      <p class="muted" id="login-msg">Sign in with the 830 Productions Google account.</p>
+      <button class="btn btn-primary btn-wide" id="signin-btn" type="button">Sign in with Google</button>
+      <p class="form-error" id="login-error" role="alert"></p>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="list-view" hidden>
+      <div class="doc-bar">
+        <div>
+          <div class="eyebrow">830 Productions</div>
+          <h1>Contracts</h1>
+        </div>
+        <button class="btn btn-primary" id="new-btn" type="button">+ New customer</button>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="toolbar">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-filter="all" type="button">All</button>
+          <button class="tab" data-filter="pending" type="button">Awaiting signature</button>
+          <button class="tab" data-filter="signed" type="button">Signed</button>
+        </div>
+        <input type="search" id="search" placeholder="Search client, event, PIN…" aria-label="Search contracts">
+      </div>
+
+      <div id="list" class="list"></div>
+    </section>
+
+    <!-- Editor -->
+    <section id="edit-view" hidden>
+      <div class="doc-bar">
+        <div>
+          <div class="eyebrow" id="edit-eyebrow">New customer</div>
+          <h1 id="edit-title">Create contract</h1>
+        </div>
+        <div class="doc-actions">
+          <button class="btn btn-ghost" id="cancel-btn" type="button">Cancel</button>
+          <button class="btn btn-primary" id="save-btn" type="submit" form="edit-form">Save &amp; get PIN</button>
+        </div>
+      </div>
+
+      <div class="editor">
+        <form id="edit-form" class="card form-card" autocomplete="off">
+          <fieldset>
+            <legend>Client</legend>
+            <label class="fld"><span>Client full name / company *</span><input name="clientName" required></label>
+            <div class="row">
+              <label class="fld grow"><span>Email</span><input name="clientEmail" type="email"></label>
+              <label class="fld grow"><span>Phone</span><input name="clientPhone" type="tel"></label>
+            </div>
+            <label class="fld"><span>Mailing address</span><input name="clientAddress"></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Event / project</legend>
+            <label class="fld"><span>Event name / description *</span><input name="eventName" required></label>
+            <div class="row">
+              <label class="fld grow"><span>Event date</span><input name="eventDate" type="date"></label>
+              <label class="fld"><span>Start</span><input name="eventStart" type="time"></label>
+              <label class="fld"><span>End</span><input name="eventEnd" type="time"></label>
+            </div>
+            <label class="fld"><span>Location</span><input name="eventLocation"></label>
+            <label class="fld"><span>Agreement date</span><input name="agreementDate" type="date"></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>1 · Services &amp; scope</legend>
+            <div class="row">
+              <label class="fld"><span>Coverage hours</span><input name="coverageHours" inputmode="decimal"></label>
+              <label class="fld"><span>Begins</span><input name="coverageStart" type="time"></label>
+              <label class="fld"><span>Ends</span><input name="coverageEnd" type="time"></label>
+            </div>
+            <label class="fld"><span>Production services</span><textarea name="productionServices" rows="2"></textarea></label>
+            <label class="fld"><span>Deliverables</span><textarea name="deliverables" rows="2"></textarea></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>2 · Fees &amp; payment</legend>
+            <div class="row">
+              <label class="fld grow"><span>Total contract price ($)</span><input name="totalPrice" inputmode="decimal"></label>
+              <label class="fld grow"><span>Non-refundable retainer ($)</span><input name="retainer" inputmode="decimal"></label>
+            </div>
+            <div class="row">
+              <label class="fld grow"><span>Remaining balance</span><input id="balance-out" disabled></label>
+              <label class="fld grow"><span>Balance due</span><input name="balanceDue" placeholder="e.g. 14 days before the event"></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Other terms</legend>
+            <div class="row">
+              <label class="fld grow"><span>Overtime rate ($/hour)</span><input name="overtimeRate" inputmode="decimal"></label>
+              <label class="fld grow"><span>Delivery estimate</span><input name="deliveryEstimate"></label>
+            </div>
+            <div class="row">
+              <label class="fld grow"><span>Review period (days)</span><input name="reviewDays" inputmode="numeric"></label>
+              <label class="fld grow"><span>Archive period (days)</span><input name="archiveDays" inputmode="numeric"></label>
+              <label class="fld grow"><span>Governing law (state)</span><input name="governingLaw"></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>830 Productions signer</legend>
+            <div class="row">
+              <label class="fld grow"><span>Representative</span><input name="repName"></label>
+              <label class="fld"><span>Initials</span><input name="repInitials" maxlength="6" class="initials-input"></label>
+            </div>
+            <div class="row">
+              <label class="fld grow"><span>Email</span><input name="repEmail" type="email"></label>
+              <label class="fld grow"><span>Phone</span><input name="repPhone" type="tel"></label>
+            </div>
+            <label class="fld"><span>Business address</span><input name="businessAddress"></label>
+          </fieldset>
+          <p class="form-error" id="edit-error" role="alert"></p>
+        </form>
+
+        <div class="preview-col">
+          <div class="preview-label">Live preview</div>
+          <div class="paper-wrap preview-paper" id="edit-preview"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Viewer -->
+    <section id="view-view" hidden>
+      <div class="doc-bar">
+        <div>
+          <div class="eyebrow" id="view-status"></div>
+          <h1 id="view-title"></h1>
+        </div>
+        <div class="doc-actions">
+          <button class="btn btn-ghost" id="back-btn" type="button">← Back</button>
+          <button class="btn btn-ghost" id="view-edit-btn" type="button">Edit</button>
+          <button class="btn btn-ghost" id="view-share-btn" type="button">Copy invite</button>
+          <button class="btn btn-primary" id="view-pdf-btn" type="button">Download PDF</button>
+        </div>
+      </div>
+      <div class="paper-wrap" id="view-paper"></div>
+    </section>
+  </main>
+
+  <!-- PIN created dialog -->
+  <dialog id="pin-dialog" class="dialog">
+    <form method="dialog">
+      <div class="eyebrow">Contract ready</div>
+      <h2 id="pd-name"></h2>
+      <p class="muted">Send the client this PIN, or the direct link below.</p>
+      <div class="big-pin" id="pd-pin"></div>
+      <div class="share-link" id="pd-link"></div>
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" type="button" id="pd-copy-pin">Copy PIN</button>
+        <button class="btn btn-ghost" type="button" id="pd-copy-msg">Copy invite message</button>
+        <a class="btn btn-ghost" id="pd-email" href="#">Email client</a>
+        <button class="btn btn-primary" value="close">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
